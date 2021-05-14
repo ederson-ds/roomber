@@ -15,21 +15,23 @@ app.controller('Home', function($scope, $http, URL) {
     $scope.player_id = null;
     var players = [];
 
-    socket.on('getPlayers', function(arrayPlayers) {
-        $scope.players = arrayPlayers[0];
-        $scope.player_id = arrayPlayers[1];
-
-        $scope.players.forEach(player => {
-            var achou = false;
-            players.forEach(p => {
-                if (p.player_id == player.usuario_id[0]) {
-                    achou = true;
+    socket.on("movePlayer", Player => {
+        players.forEach(p => {
+            if (p.player_id == Player.player_id) {
+                p.goToXtile = Player.xplayer;
+                p.goToYtile = Player.yplayer;
+                if (!p.move) {
+                    p.pathfinding.goToPath(p.Xtile, p.Ytile, p.goToXtile, p.goToYtile);
                 }
-            });
-            if (!achou) {
-                players.push(new Player(player.usuario_id[0], parseInt(player.xplayer), parseInt(player.yplayer), 10, 50, 'green'));
             }
         });
+    });
+
+    socket.on("refreshPlayers", arrayPlayers => {
+        $scope.players = arrayPlayers;
+
+        addPlayer();
+
         //verify change x or y positions
         $scope.players.forEach(player => {
             players.forEach(p => {
@@ -52,16 +54,28 @@ app.controller('Home', function($scope, $http, URL) {
             if (!achou)
                 players.splice(index, 1);
         });
-    })
+    });
 
-    function teste() {
-        setTimeout(function() {
-            socket.emit('getPlayers');
-            teste()
-        }, 2000);
+    socket.on("sendPlayers", arrayPlayers => {
+        $scope.players = arrayPlayers[0];
+        $scope.player_id = arrayPlayers[1];
+
+        addPlayer();
+    });
+
+    function addPlayer() {
+        $scope.players.forEach(player => {
+            var achou = false;
+            players.forEach(p => {
+                if (p.player_id == player.usuario_id[0]) {
+                    achou = true;
+                }
+            });
+            if (!achou) {
+                players.push(new Player(player.usuario_id[0], parseInt(player.xplayer), parseInt(player.yplayer), 10, 50, 'green'));
+            }
+        });
     }
-
-    teste();
 
     class Node {
         constructor(x, y, Xparent, Yparent, nodeEnd, isDiagonal) {
@@ -440,7 +454,7 @@ app.controller('Home', function($scope, $http, URL) {
                 if ($scope.player_id == player.player_id) {
                     player.goToXtile = Xtile;
                     player.goToYtile = Ytile;
-                    socket.emit('getPlayers', { xplayer: player.goToXtile, yplayer: player.goToYtile });
+                    socket.emit('changePlayerPosition', { player_id: player.player_id, xplayer: player.goToXtile, yplayer: player.goToYtile });
                 }
             });
         }

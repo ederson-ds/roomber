@@ -12,11 +12,6 @@ var session = require("express-session")({
     saveUninitialized: false
 });
 const mongoose = require('mongoose');
-mongoose.connect('mongodb+srv://dbUser:Wh5kFACYwnKv8iFa@cluster0.gnhhf.mongodb.net/myFirstDatabase?retryWrites=true&w=majority&ssl=true', { useNewUrlParser: true, useUnifiedTopology: true }).then(() => {
-    console.log("MongoDB Conectado");
-}).catch(err => {
-    console.log(err);
-});
 
 const UsuarioSchema = mongoose.Schema({
     email: {
@@ -73,48 +68,6 @@ app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
 app.get("/", function(req, res) {
-    if (req.session.usuario_id) {
-        User.findOne({ _id: req.session.usuario_id }, function(err, usuario) {
-            if (err) return handleError(err);
-            if (!usuario) {
-                const user = new User({
-                    name: 'Guest'
-                })
-                user.save().then(savedDoc => {
-                    console.log("User salvo com sucesso!")
-                })
-                req.session.usuario_id = user._id
-                req.session.save()
-                const stage = new Stage({
-                    xplayer: 2,
-                    yplayer: -1,
-                    usuario_id: user._id,
-                    room: '609c0073ef02480d2cd5e542'
-                })
-                stage.save().then(savedDoc => {
-                    console.log("Stage salvo com sucesso!")
-                })
-            }
-        });
-    }
-    if (!req.session.usuario_id) {
-        const user = new User({
-            name: 'Guest'
-        })
-        user.save().then(savedDoc => {
-            console.log("User salvo com sucesso!")
-        })
-        req.session.usuario_id = user._id
-        const stage = new Stage({
-            xplayer: 2,
-            yplayer: -1,
-            usuario_id: user._id,
-            room: '609c0073ef02480d2cd5e542'
-        })
-        stage.save().then(savedDoc => {
-            console.log("Stage salvo com sucesso!")
-        })
-    }
     res.sendFile(__dirname + '/public/home.html');
 })
 
@@ -126,18 +79,76 @@ io.of('/').use(sharedsession(session, {
     autoSave: true
 }));
 
-io.on('connection', socket => {
-    var array = [];
-    var players = [];
+mongoose.connect('mongodb+srv://dbUser:Wh5kFACYwnKv8iFa@cluster0.gnhhf.mongodb.net/myFirstDatabase?retryWrites=true&w=majority&ssl=true', { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false }).then(() => {
+    console.log("MongoDB Conectado");
 
-    socket.on('getPlayers', player => {
-        Stage.find({ room: '609c0073ef02480d2cd5e542' }).then((arrayPlayers) => {
-            array = [];
-            players = arrayPlayers
-            array.push(players)
-            array.push(socket.handshake.session.usuario_id)
-        });
-        if (player) {
+    io.on('connection', socket => {
+        var array = [];
+        var players = [];
+        console.log("socket conectado!");
+        if (socket.handshake.session.usuario_id) {
+            User.findOne({ _id: socket.handshake.session.usuario_id }, function(err, usuario) {
+                if (err) return handleError(err);
+                if (!usuario) {
+                    const user = new User({
+                        name: 'Guest'
+                    })
+                    user.save().then(savedDoc => {
+                        console.log("User salvo com sucesso!")
+                        socket.handshake.session.usuario_id = user._id
+                        socket.handshake.session.save()
+                        const stage = new Stage({
+                            xplayer: 2,
+                            yplayer: -1,
+                            usuario_id: user._id,
+                            room: '609c0073ef02480d2cd5e542'
+                        })
+                        stage.save().then(savedDoc => {
+                            console.log("Stage salvo com sucesso!")
+                            getPlayers();
+                        })
+                    })
+                }
+            });
+        }
+        if (!socket.handshake.session.usuario_id) {
+            const user = new User({
+                name: 'Guest'
+            })
+            user.save().then(savedDoc => {
+                console.log("User salvo com sucesso!")
+                socket.handshake.session.usuario_id = user._id
+                const stage = new Stage({
+                    xplayer: 2,
+                    yplayer: -1,
+                    usuario_id: user._id,
+                    room: '609c0073ef02480d2cd5e542'
+                })
+                stage.save().then(savedDoc => {
+                    console.log("Stage salvo com sucesso!")
+                    getPlayers()
+                })
+            })
+        }
+
+        function getPlayers() {
+            Stage.find({ room: '609c0073ef02480d2cd5e542' }).then((arrayPlayers) => {
+                array = []
+                players = arrayPlayers
+                array.push(players)
+                array.push(socket.handshake.session.usuario_id)
+                socket.emit('sendPlayers', array)
+                socket.broadcast.emit('refreshPlayers', players)
+            })
+        }
+
+        socket.on('changePlayerPosition', player => {
+            players.forEach(p => {
+                if (p.usuario_id[0] == player.player_id) {
+                    p.xplayer = player.xplayer;
+                    p.yplayer = player.yplayer;
+                }
+            });
             const filter = {
                 usuario_id: socket.handshake.session.usuario_id,
                 room: '609c0073ef02480d2cd5e542'
@@ -149,29 +160,37 @@ io.on('connection', socket => {
             Stage.findOneAndUpdate(filter, update).then((err, doc) => {
                 console.log("User Updated");
                 Stage.find({ room: '609c0073ef02480d2cd5e542' }).then((arrayPlayers) => {
-                    array = [];
+                    array = []
                     players = arrayPlayers
                     array.push(players)
                     array.push(socket.handshake.session.usuario_id)
-                    socket.emit('getPlayers', array);
-                });
+                    socket.emit('refreshPlayers', players)
+                    socket.broadcast.emit('movePlayer', player)
+                })
             })
-        } else if (players.length != 0)
-            socket.emit('getPlayers', array);
-    })
+        })
 
-    socket.on("disconnect", () => {
-        User.deleteOne({ _id: socket.handshake.session.usuario_id }, function(err) {
-            if (err) return handleError(err);
-            // deleted at most one tank document
+        socket.on("disconnect", () => {
+            User.deleteOne({ _id: socket.handshake.session.usuario_id }, function(err) {
+                if (err) return handleError(err);
+                // deleted at most one tank document
+            })
+            Stage.deleteOne({ usuario_id: socket.handshake.session.usuario_id }, function(err) {
+                if (err) return handleError(err);
+                // deleted at most one tank document
+                Stage.find({ room: '609c0073ef02480d2cd5e542' }).then((arrayPlayers) => {
+                    array = []
+                    players = arrayPlayers
+                    array.push(players)
+                    array.push(socket.handshake.session.usuario_id)
+                    socket.broadcast.emit('refreshPlayers', players)
+                })
+            })
+            console.log("disconectado: " + socket.handshake.session.usuario_id)
         });
-        Stage.deleteOne({ usuario_id: socket.handshake.session.usuario_id }, function(err) {
-            if (err) return handleError(err);
-            // deleted at most one tank document
-        });
-        socket.emit('getPlayers', array);
-        console.log("disconectado: " + socket.handshake.session.usuario_id);
-    });
-})
+    })
+}).catch(err => {
+    console.log(err);
+});
 
 server.listen(PORT);
