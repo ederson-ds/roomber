@@ -20,9 +20,7 @@ app.controller('Home', function($scope, $http, URL) {
             if (p.player_id == Player.player_id) {
                 p.goToXtile = Player.xplayer;
                 p.goToYtile = Player.yplayer;
-                if (!p.move) {
-                    p.pathfinding.goToPath(p.Xtile, p.Ytile, p.goToXtile, p.goToYtile);
-                }
+                p.pathfinding.goToPath(p.Xtile, p.Ytile, p.goToXtile, p.goToYtile);
             }
         });
     });
@@ -36,9 +34,7 @@ app.controller('Home', function($scope, $http, URL) {
         $scope.players.forEach(player => {
             players.forEach(p => {
                 if (p.player_id == player.usuario_id[0] && (p.Xtile != player.xplayer || p.Ytile != player.yplayer)) {
-                    if (!p.move) {
-                        p.pathfinding.goToPath(p.Xtile, p.Ytile, player.xplayer, player.yplayer);
-                    }
+                    p.pathfinding.goToPath(p.Xtile, p.Ytile, player.xplayer, player.yplayer);
                 }
             });
         });
