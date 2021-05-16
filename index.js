@@ -49,9 +49,24 @@ const StageSchema = mongoose.Schema({
     ]
 })
 
+const ChatSchema = mongoose.Schema({
+    message: {
+        type: String,
+        require: true
+    },
+    author: {
+        type: String,
+        require: true
+    },
+    room: [
+        { type: mongoose.Schema.Types.ObjectId, ref: 'rooms', require: true }
+    ]
+})
+
 const User = mongoose.model('usuarios', UsuarioSchema)
 const Room = mongoose.model('room', RoomSchema)
 const Stage = mongoose.model('stage', StageSchema)
+const Chat = mongoose.model('chat', ChatSchema)
     /*
     const room = new Room();
     room.save().then(savedDoc => {
@@ -86,6 +101,18 @@ mongoose.connect('mongodb+srv://dbUser:Wh5kFACYwnKv8iFa@cluster0.gnhhf.mongodb.n
         var array = [];
         var players = [];
         console.log("socket conectado!");
+
+        socket.on('sendMessage', data => {
+            const chat = new Chat({
+                message: data.message,
+                author: socket.handshake.session.name,
+                room: '609c0073ef02480d2cd5e542'
+            })
+            chat.save().then(savedDoc => {
+                socket.broadcast.emit('receivedMessage', data);
+            })
+        })
+
         if (socket.handshake.session.usuario_id) {
             User.findOne({ _id: socket.handshake.session.usuario_id }, function(err, usuario) {
                 if (err) return handleError(err);
@@ -96,6 +123,7 @@ mongoose.connect('mongodb+srv://dbUser:Wh5kFACYwnKv8iFa@cluster0.gnhhf.mongodb.n
                     user.save().then(savedDoc => {
                         console.log("User salvo com sucesso!")
                         socket.handshake.session.usuario_id = user._id
+                        socket.handshake.session.name = user.name
                         socket.handshake.session.save()
                         const stage = new Stage({
                             xplayer: 2,
@@ -118,6 +146,7 @@ mongoose.connect('mongodb+srv://dbUser:Wh5kFACYwnKv8iFa@cluster0.gnhhf.mongodb.n
             user.save().then(savedDoc => {
                 console.log("User salvo com sucesso!")
                 socket.handshake.session.usuario_id = user._id
+                socket.handshake.session.name = user.name
                 const stage = new Stage({
                     xplayer: 2,
                     yplayer: -1,
@@ -137,8 +166,16 @@ mongoose.connect('mongodb+srv://dbUser:Wh5kFACYwnKv8iFa@cluster0.gnhhf.mongodb.n
                 players = arrayPlayers
                 array.push(players)
                 array.push(socket.handshake.session.usuario_id)
+                array.push(socket.handshake.session.name)
                 socket.emit('sendPlayers', array)
                 socket.broadcast.emit('refreshPlayers', players)
+            })
+            getMessages();
+        }
+
+        function getMessages() {
+            Chat.find({ room: '609c0073ef02480d2cd5e542' }).then((messages) => {
+                socket.emit('previousMessages', messages)
             })
         }
 

@@ -15,6 +15,39 @@ app.controller('Home', function($scope, $http, URL) {
     $scope.player_id = null;
     var players = [];
 
+    $(".messages").animate({ scrollTop: $(document).height() }, 1000);
+
+    socket.on('previousMessages', messages => {
+        for (message of messages) {
+            renderMessage(message);
+        }
+    });
+
+    socket.on('receivedMessage', message => {
+        renderMessage(message);
+    });
+
+    function renderMessage(message) {
+        $('.messages').append('<div class="message"><strong>' + message.author + '</strong>: ' + message.message + '</div>');
+        $(".messages").animate({ scrollTop: $(document).height() }, 1000);
+    }
+
+    var messageInput = document.getElementById("messageInput");
+
+    messageInput.addEventListener("keyup", function(event) {
+        if (event.key === 'Enter') {
+            var messageObject = {
+                author: $scope.playerName,
+                message: messageInput.value
+            }
+
+            renderMessage(messageObject);
+
+            socket.emit('sendMessage', messageObject);
+            messageInput.value = "";
+        }
+    });
+
     socket.on("movePlayer", Player => {
         players.forEach(p => {
             if (p.player_id == Player.player_id) {
@@ -55,6 +88,7 @@ app.controller('Home', function($scope, $http, URL) {
     socket.on("sendPlayers", arrayPlayers => {
         $scope.players = arrayPlayers[0];
         $scope.player_id = arrayPlayers[1];
+        $scope.playerName = arrayPlayers[2];
 
         addPlayer();
     });

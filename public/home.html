@@ -24,6 +24,28 @@
             bottom: 0;
             top: 0;
         }
+        
+        .messageTextBox {
+            position: absolute;
+            bottom: 120px;
+            left: 40%;
+            z-index: 9999;
+            width: 20%;
+        }
+        
+        .messages {
+            position: absolute;
+            height: 20%;
+            width: 40%;
+            left: 30%;
+            border: 1px solid white;
+            z-index: 1;
+            overflow: auto;
+        }
+        
+        .message {
+            color: white;
+        }
     </style>
     <div ng-view></div>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
