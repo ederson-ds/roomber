@@ -102,7 +102,7 @@ app.controller('Home', function($scope, $http, URL) {
                 }
             });
             if (!achou) {
-                players.push(new Player(player.usuario_id[0], parseInt(player.xplayer), parseInt(player.yplayer), 10, 50, 'green'));
+                players.push(new Player(player.usuario_id[0], parseInt(player.xplayer), parseInt(player.yplayer), 34, 78));
             }
         });
     }
@@ -462,10 +462,10 @@ app.controller('Home', function($scope, $http, URL) {
     }
 
     class Player {
-        constructor(player_id, x, y, width, height, color) {
+        constructor(player_id, x, y, width, height) {
             this.player_id = player_id;
             this.x = Grid.getXposition(x, y) + 32 - (width / 2);
-            this.y = Grid.getYposition(x, y) + 16 - height;
+            this.y = Grid.getYposition(x, y) + 25 - height;
             this.Xtile = x;
             this.Ytile = y;
             this.goToXtile;
@@ -473,10 +473,11 @@ app.controller('Home', function($scope, $http, URL) {
             this.move = false;
             this.currentNode = null;
             this.pathfinding = new PathFind(this);
+            this.img = new Image();
+            this.img.src = 'images/char.png?v=' + new Date().getTime();
 
             this.width = width;
             this.height = height;
-            this.color = color;
         }
 
         changePlayerPosition(Xtile, Ytile) {
@@ -490,8 +491,7 @@ app.controller('Home', function($scope, $http, URL) {
         }
 
         draw(ctx) {
-            ctx.fillStyle = this.color;
-            ctx.fillRect(this.x, this.y, this.width, this.height);
+            ctx.drawImage(this.img, this.x, this.y);
         }
 
         goToPath(deltaTime) {
@@ -502,13 +502,13 @@ app.controller('Home', function($scope, $http, URL) {
                             this.x += 20 / deltaTime;
                         }
 
-                        if (this.y < Grid.getYposition(node.x, node.y) + 16 - this.height) {
+                        if (this.y < Grid.getYposition(node.x, node.y) + 25 - this.height) {
                             this.y += 10 / deltaTime;
                         }
 
-                        if (this.x >= Grid.getXposition(node.x, node.y) + 32 - (this.width / 2) && this.y >= Grid.getYposition(node.x, node.y) + 16 - this.height) {
+                        if (this.x >= Grid.getXposition(node.x, node.y) + 32 - (this.width / 2) && this.y >= Grid.getYposition(node.x, node.y) + 25 - this.height) {
                             this.x = Grid.getXposition(node.x, node.y) + 32 - (this.width / 2);
-                            this.y = Grid.getYposition(node.x, node.y) + 16 - this.height;
+                            this.y = Grid.getYposition(node.x, node.y) + 25 - this.height;
                             this.Xtile = node.x;
                             this.Ytile = node.y;
                             if (this.pathfinding.rota.length == key + 1)
@@ -520,13 +520,13 @@ app.controller('Home', function($scope, $http, URL) {
                             this.x -= 20 / deltaTime;
                         }
 
-                        if (this.y > Grid.getYposition(node.x, node.y) + 16 - this.height) {
+                        if (this.y > Grid.getYposition(node.x, node.y) + 25 - this.height) {
                             this.y -= 10 / deltaTime;
                         }
 
-                        if (this.x <= Grid.getXposition(node.x, node.y) + 32 - (this.width / 2) && this.y <= Grid.getYposition(node.x, node.y) + 16 - this.height) {
+                        if (this.x <= Grid.getXposition(node.x, node.y) + 32 - (this.width / 2) && this.y <= Grid.getYposition(node.x, node.y) + 25 - this.height) {
                             this.x = Grid.getXposition(node.x, node.y) + 32 - (this.width / 2);
-                            this.y = Grid.getYposition(node.x, node.y) + 16 - this.height;
+                            this.y = Grid.getYposition(node.x, node.y) + 25 - this.height;
                             this.Xtile = node.x;
                             this.Ytile = node.y;
                             if (this.pathfinding.rota.length == key + 1)
@@ -538,13 +538,13 @@ app.controller('Home', function($scope, $http, URL) {
                             this.x -= 20 / deltaTime;
                         }
 
-                        if (this.y < Grid.getYposition(node.x, node.y) + 16 - this.height) {
+                        if (this.y < Grid.getYposition(node.x, node.y) + 25 - this.height) {
                             this.y += 10 / deltaTime;
                         }
 
-                        if (this.x <= Grid.getXposition(node.x, node.y) + 32 - (this.width / 2) && this.y >= Grid.getYposition(node.x, node.y) + 16 - this.height) {
+                        if (this.x <= Grid.getXposition(node.x, node.y) + 32 - (this.width / 2) && this.y >= Grid.getYposition(node.x, node.y) + 25 - this.height) {
                             this.x = Grid.getXposition(node.x, node.y) + 32 - (this.width / 2);
-                            this.y = Grid.getYposition(node.x, node.y) + 16 - this.height;
+                            this.y = Grid.getYposition(node.x, node.y) + 25 - this.height;
                             this.Xtile = node.x;
                             this.Ytile = node.y;
                             if (this.pathfinding.rota.length == key + 1)
@@ -553,13 +553,13 @@ app.controller('Home', function($scope, $http, URL) {
                         }
                     } else if (this.Xtile < node.x && this.Ytile < node.y) {
                         //bottom
-                        if (this.y < Grid.getYposition(node.x, node.y) + 16 - this.height) {
+                        if (this.y < Grid.getYposition(node.x, node.y) + 25 - this.height) {
                             this.y += 10 / deltaTime;
                         }
 
-                        if (this.y >= Grid.getYposition(node.x, node.y) + 16 - this.height) {
+                        if (this.y >= Grid.getYposition(node.x, node.y) + 25 - this.height) {
                             this.x = Grid.getXposition(node.x, node.y) + 32 - (this.width / 2);
-                            this.y = Grid.getYposition(node.x, node.y) + 16 - this.height;
+                            this.y = Grid.getYposition(node.x, node.y) + 25 - this.height;
                             this.Xtile = node.x;
                             this.Ytile = node.y;
                             if (this.pathfinding.rota.length == key + 1)
@@ -570,13 +570,13 @@ app.controller('Home', function($scope, $http, URL) {
                         if (this.x < Grid.getXposition(node.x, node.y) + 32 - (this.width / 2)) {
                             this.x += 20 / deltaTime;
                         }
-                        if (this.y > Grid.getYposition(node.x, node.y) + 16 - this.height) {
+                        if (this.y > Grid.getYposition(node.x, node.y) + 25 - this.height) {
                             this.y -= 10 / deltaTime;
                         }
 
-                        if (this.x >= Grid.getXposition(node.x, node.y) + 32 - (this.width / 2) && this.y <= Grid.getYposition(node.x, node.y) + 16 - this.height) {
+                        if (this.x >= Grid.getXposition(node.x, node.y) + 32 - (this.width / 2) && this.y <= Grid.getYposition(node.x, node.y) + 25 - this.height) {
                             this.x = Grid.getXposition(node.x, node.y) + 32 - (this.width / 2);
-                            this.y = Grid.getYposition(node.x, node.y) + 16 - this.height;
+                            this.y = Grid.getYposition(node.x, node.y) + 25 - this.height;
                             this.Xtile = node.x;
                             this.Ytile = node.y;
                             if (this.pathfinding.rota.length == key + 1)
@@ -727,8 +727,6 @@ app.controller('Home', function($scope, $http, URL) {
 
     var grid = new Grid(innerWidth / 2, innerHeight / 2);
     var chunk = new Chunk(0, 0, 5, 5);
-    //var player = new Player(2, 2, 10, 50, 'green');
-    //var player2 = new Player(0, 0, 10, 50, 'red');
 
     var lastTime = 0;
 
