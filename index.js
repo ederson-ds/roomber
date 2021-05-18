@@ -3,7 +3,12 @@ const path = require("path");
 const PORT = process.env.PORT || 3000;
 const app = express();
 const server = require('http').createServer(app)
-const io = require('socket.io')(server, { origins: '*:*' })
+const io = require("socket.io")(server, {
+    cors: {
+        origin: "https://roomber.herokuapp.com",
+        methods: ["GET", "POST"]
+    }
+})
 var sharedsession = require("express-socket.io-session");
 var session = require("express-session")({
     secret: 'secret-key',
