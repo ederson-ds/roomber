@@ -3,8 +3,7 @@ const path = require("path");
 const PORT = process.env.PORT || 3000;
 const app = express();
 const server = require('http').createServer(app)
-    //const session = require('express-session')
-const io = require('socket.io')(server);
+const io = require('socket.io')(server, { origins: '*:*' })
 var sharedsession = require("express-socket.io-session");
 var session = require("express-session")({
     secret: 'secret-key',
