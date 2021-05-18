@@ -5,8 +5,7 @@ app.controller('Home', function($scope, $http, URL) {
     if (window.location.host == "localhost:3000") {
         socket = io('http://localhost:3000');
     } else {
-        console.log("teste");
-        socket = io('https://roomber.herokuapp.com');
+        socket = io('http://roomber.herokuapp.com');
     }
 
     canvas.width = innerWidth;
