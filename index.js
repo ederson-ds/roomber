@@ -9,7 +9,6 @@ var session = require("express-session")({
     secret: 'secret-key',
     resave: false,
     saveUninitialized: false,
-    store: new MemoryStore(),
     maxAge: Date.now() + (30 * 86400 * 1000)
 });
 const mongoose = require('mongoose');
