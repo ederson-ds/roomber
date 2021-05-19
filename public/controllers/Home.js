@@ -464,8 +464,10 @@ app.controller('Home', function($scope, $http, URL) {
     class Player {
         constructor(player_id, x, y, width, height) {
             this.player_id = player_id;
-            this.x = Grid.getXposition(x, y) + 32 - (width / 2);
-            this.y = Grid.getYposition(x, y) + 25 - height;
+            this.width = width;
+            this.height = height;
+            this.x = this.getPlayerXPosition(x, y);
+            this.y = this.getPlayerYPosition(x, y);
             this.Xtile = x;
             this.Ytile = y;
             this.goToXtile;
@@ -475,9 +477,42 @@ app.controller('Home', function($scope, $http, URL) {
             this.pathfinding = new PathFind(this);
             this.img = new Image();
             this.img.src = 'images/char.png?v=' + new Date().getTime();
+            this.charMovimentImg = new Image();
+            this.charMovimentImg.src = 'images/char-moviment.png?v=' + new Date().getTime();
+            this.charHeadBottomRightImg = new Image();
+            this.charHeadBottomRightImg.src = 'images/head.png?v=' + new Date().getTime();
+            this.charHeadBottomLeftImg = new Image();
+            this.charHeadBottomLeftImg.src = 'images/headbottomleft.png?v=' + new Date().getTime();
+            this.framesBottomRight = [
+                { image: this.charMovimentImg, sx: 14, sy: 5, sWidth: 28, sHeight: 54 },
+                { image: this.charMovimentImg, sx: 68, sy: 6, sWidth: 36, sHeight: 53 },
+                { image: this.charMovimentImg, sx: 132, sy: 7, sWidth: 29, sHeight: 53 },
+                { image: this.charMovimentImg, sx: 189, sy: 8, sWidth: 38, sHeight: 55 }
+            ];
+            this.framesBottomLeft = [
+                { image: this.charMovimentImg, sx: 10, sy: 104, sWidth: 28, sHeight: 54 },
+                { image: this.charMovimentImg, sx: 63, sy: 106, sWidth: 36, sHeight: 53 },
+                { image: this.charMovimentImg, sx: 130, sy: 104, sWidth: 29, sHeight: 53 },
+                { image: this.charMovimentImg, sx: 186, sy: 107, sWidth: 38, sHeight: 55 }
+            ];
+            this.framesIdleBottomRight = [
+                { image: this.charMovimentImg, sx: 249, sy: 8, sWidth: 29, sHeight: 53 }
+            ];
+            this.framesIdleBottomLeft = [
+                { image: this.charMovimentImg, sx: 249, sy: 108, sWidth: 29, sHeight: 53 }
+            ];
+            this.frames = this.framesIdleBottomRight;
+            this.currentLoopIndex = 0;
+            this.frameCount = 0;
+            this.currentDirection = 0;
+        }
 
-            this.width = width;
-            this.height = height;
+        getPlayerXPosition(x, y) {
+            return Grid.getXposition(x, y) + 32 - (this.width / 2);
+        }
+
+        getPlayerYPosition(x, y) {
+            return Grid.getYposition(x, y) + 45 - this.height;
         }
 
         changePlayerPosition(Xtile, Ytile) {
@@ -490,25 +525,53 @@ app.controller('Home', function($scope, $http, URL) {
             });
         }
 
+        drawFrame(ctx) {
+            var frame = this.frames[this.currentLoopIndex];
+            ctx.drawImage(frame.image, frame.sx, frame.sy, frame.sWidth, frame.sHeight, this.x, this.y, frame.sWidth, frame.sHeight);
+
+            if (this.currentDirection == 0) {
+                //head
+                ctx.drawImage(this.charHeadBottomRightImg, 0, 0, 23, 28, this.x + 3, this.y - 24, 23, 28);
+            }
+            if (this.currentDirection == 1) {
+                //head
+                ctx.drawImage(this.charHeadBottomLeftImg, 0, 0, 23, 28, this.x + 3, this.y - 24, 23, 28);
+            }
+        }
+
         draw(ctx) {
-            ctx.drawImage(this.img, this.x, this.y);
+            this.drawFrame(ctx);
+            this.frameCount++;
+            if (this.frameCount < 10) {
+                return;
+            }
+            this.frameCount = 0;
+            this.currentLoopIndex++;
+            if (this.currentLoopIndex >= this.frames.length) {
+                this.currentLoopIndex = 0;
+            }
         }
 
         goToPath(deltaTime) {
             this.pathfinding.rota.forEach((node, key) => {
                 if (this.currentNode.x == node.x && this.currentNode.y == node.y) {
                     if (this.Xtile == node.x && this.Ytile < node.y) {
-                        if (this.x < Grid.getXposition(node.x, node.y) + 32 - (this.width / 2)) {
+                        this.frames = this.framesBottomRight;
+                        this.currentDirection = 0;
+                        if (this.x < this.getPlayerXPosition(node.x, node.y)) {
                             this.x += 20 / deltaTime;
                         }
 
-                        if (this.y < Grid.getYposition(node.x, node.y) + 25 - this.height) {
+                        if (this.y < this.getPlayerYPosition(node.x, node.y)) {
                             this.y += 10 / deltaTime;
                         }
 
-                        if (this.x >= Grid.getXposition(node.x, node.y) + 32 - (this.width / 2) && this.y >= Grid.getYposition(node.x, node.y) + 25 - this.height) {
-                            this.x = Grid.getXposition(node.x, node.y) + 32 - (this.width / 2);
-                            this.y = Grid.getYposition(node.x, node.y) + 25 - this.height;
+                        if (this.x >= this.getPlayerXPosition(node.x, node.y) && this.y >= this.getPlayerYPosition(node.x, node.y)) {
+                            //bottom right
+                            this.currentLoopIndex = 0;
+                            this.frames = this.framesIdleBottomRight;
+                            this.x = this.getPlayerXPosition(node.x, node.y);
+                            this.y = this.getPlayerYPosition(node.x, node.y);
                             this.Xtile = node.x;
                             this.Ytile = node.y;
                             if (this.pathfinding.rota.length == key + 1)
@@ -516,17 +579,17 @@ app.controller('Home', function($scope, $http, URL) {
                             this.currentNode = this.pathfinding.rota[key + 1];
                         }
                     } else if (this.Ytile > node.y) {
-                        if (this.x > Grid.getXposition(node.x, node.y) + 32 - (this.width / 2)) {
+                        if (this.x > this.getPlayerXPosition(node.x, node.y)) {
                             this.x -= 20 / deltaTime;
                         }
 
-                        if (this.y > Grid.getYposition(node.x, node.y) + 25 - this.height) {
+                        if (this.y > this.getPlayerYPosition(node.x, node.y)) {
                             this.y -= 10 / deltaTime;
                         }
 
-                        if (this.x <= Grid.getXposition(node.x, node.y) + 32 - (this.width / 2) && this.y <= Grid.getYposition(node.x, node.y) + 25 - this.height) {
-                            this.x = Grid.getXposition(node.x, node.y) + 32 - (this.width / 2);
-                            this.y = Grid.getYposition(node.x, node.y) + 25 - this.height;
+                        if (this.x <= this.getPlayerXPosition(node.x, node.y) && this.y <= this.getPlayerYPosition(node.x, node.y)) {
+                            this.x = this.getPlayerXPosition(node.x, node.y);
+                            this.y = this.getPlayerYPosition(node.x, node.y);
                             this.Xtile = node.x;
                             this.Ytile = node.y;
                             if (this.pathfinding.rota.length == key + 1)
@@ -534,17 +597,22 @@ app.controller('Home', function($scope, $http, URL) {
                             this.currentNode = this.pathfinding.rota[key + 1];
                         }
                     } else if (this.Xtile < node.x && this.Ytile == node.y) {
-                        if (this.x > Grid.getXposition(node.x, node.y) + 32 - (this.width / 2)) {
+                        this.frames = this.framesBottomLeft;
+                        this.currentDirection = 1;
+                        if (this.x > this.getPlayerXPosition(node.x, node.y)) {
                             this.x -= 20 / deltaTime;
                         }
 
-                        if (this.y < Grid.getYposition(node.x, node.y) + 25 - this.height) {
+                        if (this.y < this.getPlayerYPosition(node.x, node.y)) {
                             this.y += 10 / deltaTime;
                         }
 
-                        if (this.x <= Grid.getXposition(node.x, node.y) + 32 - (this.width / 2) && this.y >= Grid.getYposition(node.x, node.y) + 25 - this.height) {
-                            this.x = Grid.getXposition(node.x, node.y) + 32 - (this.width / 2);
-                            this.y = Grid.getYposition(node.x, node.y) + 25 - this.height;
+                        if (this.x <= this.getPlayerXPosition(node.x, node.y) && this.y >= this.getPlayerYPosition(node.x, node.y)) {
+                            //Bottom left
+                            this.currentLoopIndex = 0;
+                            this.frames = this.framesIdleBottomLeft;
+                            this.x = this.getPlayerXPosition(node.x, node.y);
+                            this.y = this.getPlayerYPosition(node.x, node.y);
                             this.Xtile = node.x;
                             this.Ytile = node.y;
                             if (this.pathfinding.rota.length == key + 1)
@@ -553,13 +621,13 @@ app.controller('Home', function($scope, $http, URL) {
                         }
                     } else if (this.Xtile < node.x && this.Ytile < node.y) {
                         //bottom
-                        if (this.y < Grid.getYposition(node.x, node.y) + 25 - this.height) {
+                        if (this.y < this.getPlayerYPosition(node.x, node.y)) {
                             this.y += 10 / deltaTime;
                         }
 
-                        if (this.y >= Grid.getYposition(node.x, node.y) + 25 - this.height) {
-                            this.x = Grid.getXposition(node.x, node.y) + 32 - (this.width / 2);
-                            this.y = Grid.getYposition(node.x, node.y) + 25 - this.height;
+                        if (this.y >= this.getPlayerYPosition(node.x, node.y)) {
+                            this.x = this.getPlayerXPosition(node.x, node.y);
+                            this.y = this.getPlayerYPosition(node.x, node.y);
                             this.Xtile = node.x;
                             this.Ytile = node.y;
                             if (this.pathfinding.rota.length == key + 1)
@@ -567,16 +635,16 @@ app.controller('Home', function($scope, $http, URL) {
                             this.currentNode = this.pathfinding.rota[key + 1];
                         }
                     } else {
-                        if (this.x < Grid.getXposition(node.x, node.y) + 32 - (this.width / 2)) {
+                        if (this.x < this.getPlayerXPosition(node.x, node.y)) {
                             this.x += 20 / deltaTime;
                         }
-                        if (this.y > Grid.getYposition(node.x, node.y) + 25 - this.height) {
+                        if (this.y > this.getPlayerYPosition(node.x, node.y)) {
                             this.y -= 10 / deltaTime;
                         }
 
-                        if (this.x >= Grid.getXposition(node.x, node.y) + 32 - (this.width / 2) && this.y <= Grid.getYposition(node.x, node.y) + 25 - this.height) {
-                            this.x = Grid.getXposition(node.x, node.y) + 32 - (this.width / 2);
-                            this.y = Grid.getYposition(node.x, node.y) + 25 - this.height;
+                        if (this.x >= this.getPlayerXPosition(node.x, node.y) && this.y <= this.getPlayerYPosition(node.x, node.y)) {
+                            this.x = this.getPlayerXPosition(node.x, node.y);
+                            this.y = this.getPlayerYPosition(node.x, node.y);
                             this.Xtile = node.x;
                             this.Ytile = node.y;
                             if (this.pathfinding.rota.length == key + 1)
