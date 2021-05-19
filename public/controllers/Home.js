@@ -472,6 +472,8 @@ app.controller('Home', function($scope, $http, URL) {
             this.Ytile = y;
             this.goToXtile;
             this.goToYtile;
+            this.speedX = 2;
+            this.speedY = 1;
             this.move = false;
             this.currentNode = null;
             this.pathfinding = new PathFind(this);
@@ -501,7 +503,23 @@ app.controller('Home', function($scope, $http, URL) {
             this.framesIdleBottomLeft = [
                 { image: this.charMovimentImg, sx: 249, sy: 108, sWidth: 29, sHeight: 53 }
             ];
+            this.framesHeadIdleBottomLeft = [
+                { image: this.charHeadBottomLeftImg, sx: 0, sy: 0, sWidth: 29, sHeight: 53, x: 3, y: -24 }
+            ];
+            this.framesHeadBottomLeft = [
+                { image: this.charHeadBottomLeftImg, sx: 0, sy: 0, sWidth: 29, sHeight: 53, x: 2, y: -24 },
+                { image: this.charHeadBottomLeftImg, sx: 0, sy: 0, sWidth: 29, sHeight: 53, x: 8, y: -24 },
+                { image: this.charHeadBottomLeftImg, sx: 0, sy: 0, sWidth: 29, sHeight: 53, x: 3, y: -24 },
+                { image: this.charHeadBottomLeftImg, sx: 0, sy: 0, sWidth: 29, sHeight: 53, x: 8, y: -24 }
+            ];
+            this.framesHeadBottomRight = [
+                { image: this.charHeadBottomRightImg, sx: 0, sy: 0, sWidth: 29, sHeight: 53, x: 3, y: -24 },
+                { image: this.charHeadBottomRightImg, sx: 0, sy: 0, sWidth: 29, sHeight: 53, x: 5, y: -24 },
+                { image: this.charHeadBottomRightImg, sx: 0, sy: 0, sWidth: 29, sHeight: 53, x: 3, y: -24 },
+                { image: this.charHeadBottomRightImg, sx: 0, sy: 0, sWidth: 29, sHeight: 53, x: 7, y: -24 }
+            ];
             this.frames = this.framesIdleBottomRight;
+            this.framesHead = this.framesHeadBottomRight;
             this.currentLoopIndex = 0;
             this.frameCount = 0;
             this.currentDirection = 0;
@@ -527,16 +545,11 @@ app.controller('Home', function($scope, $http, URL) {
 
         drawFrame(ctx) {
             var frame = this.frames[this.currentLoopIndex];
+            var framesHead = this.framesHead[this.currentLoopIndex];
             ctx.drawImage(frame.image, frame.sx, frame.sy, frame.sWidth, frame.sHeight, this.x, this.y, frame.sWidth, frame.sHeight);
 
-            if (this.currentDirection == 0) {
-                //head
-                ctx.drawImage(this.charHeadBottomRightImg, 0, 0, 23, 28, this.x + 3, this.y - 24, 23, 28);
-            }
-            if (this.currentDirection == 1) {
-                //head
-                ctx.drawImage(this.charHeadBottomLeftImg, 0, 0, 23, 28, this.x + 3, this.y - 24, 23, 28);
-            }
+            //head
+            ctx.drawImage(framesHead.image, framesHead.sx, framesHead.sy, framesHead.sWidth, framesHead.sHeight, this.x + framesHead.x, this.y + framesHead.y, framesHead.sWidth, framesHead.sHeight);
         }
 
         draw(ctx) {
@@ -557,13 +570,14 @@ app.controller('Home', function($scope, $http, URL) {
                 if (this.currentNode.x == node.x && this.currentNode.y == node.y) {
                     if (this.Xtile == node.x && this.Ytile < node.y) {
                         this.frames = this.framesBottomRight;
+                        this.framesHead = this.framesHeadBottomRight;
                         this.currentDirection = 0;
                         if (this.x < this.getPlayerXPosition(node.x, node.y)) {
-                            this.x += 20 / deltaTime;
+                            this.x += this.speedX;
                         }
 
                         if (this.y < this.getPlayerYPosition(node.x, node.y)) {
-                            this.y += 10 / deltaTime;
+                            this.y += this.speedY;
                         }
 
                         if (this.x >= this.getPlayerXPosition(node.x, node.y) && this.y >= this.getPlayerYPosition(node.x, node.y)) {
@@ -580,11 +594,11 @@ app.controller('Home', function($scope, $http, URL) {
                         }
                     } else if (this.Ytile > node.y) {
                         if (this.x > this.getPlayerXPosition(node.x, node.y)) {
-                            this.x -= 20 / deltaTime;
+                            this.x -= this.speedX;
                         }
 
                         if (this.y > this.getPlayerYPosition(node.x, node.y)) {
-                            this.y -= 10 / deltaTime;
+                            this.y -= this.speedY;
                         }
 
                         if (this.x <= this.getPlayerXPosition(node.x, node.y) && this.y <= this.getPlayerYPosition(node.x, node.y)) {
@@ -598,19 +612,21 @@ app.controller('Home', function($scope, $http, URL) {
                         }
                     } else if (this.Xtile < node.x && this.Ytile == node.y) {
                         this.frames = this.framesBottomLeft;
+                        this.framesHead = this.framesHeadBottomLeft;
                         this.currentDirection = 1;
                         if (this.x > this.getPlayerXPosition(node.x, node.y)) {
-                            this.x -= 20 / deltaTime;
+                            this.x -= this.speedX;
                         }
 
                         if (this.y < this.getPlayerYPosition(node.x, node.y)) {
-                            this.y += 10 / deltaTime;
+                            this.y += this.speedY;
                         }
 
                         if (this.x <= this.getPlayerXPosition(node.x, node.y) && this.y >= this.getPlayerYPosition(node.x, node.y)) {
                             //Bottom left
                             this.currentLoopIndex = 0;
                             this.frames = this.framesIdleBottomLeft;
+                            this.framesHead = this.framesHeadIdleBottomLeft;
                             this.x = this.getPlayerXPosition(node.x, node.y);
                             this.y = this.getPlayerYPosition(node.x, node.y);
                             this.Xtile = node.x;
@@ -622,7 +638,7 @@ app.controller('Home', function($scope, $http, URL) {
                     } else if (this.Xtile < node.x && this.Ytile < node.y) {
                         //bottom
                         if (this.y < this.getPlayerYPosition(node.x, node.y)) {
-                            this.y += 10 / deltaTime;
+                            this.y += this.speedY;
                         }
 
                         if (this.y >= this.getPlayerYPosition(node.x, node.y)) {
@@ -636,10 +652,10 @@ app.controller('Home', function($scope, $http, URL) {
                         }
                     } else {
                         if (this.x < this.getPlayerXPosition(node.x, node.y)) {
-                            this.x += 20 / deltaTime;
+                            this.x += this.speedX;
                         }
                         if (this.y > this.getPlayerYPosition(node.x, node.y)) {
-                            this.y -= 10 / deltaTime;
+                            this.y -= this.speedY;
                         }
 
                         if (this.x >= this.getPlayerXPosition(node.x, node.y) && this.y <= this.getPlayerYPosition(node.x, node.y)) {
