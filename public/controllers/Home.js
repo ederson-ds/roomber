@@ -485,41 +485,46 @@ app.controller('Home', function($scope, $http, URL) {
             this.charHeadBottomRightImg.src = 'images/head.png?v=' + new Date().getTime();
             this.charHeadBottomLeftImg = new Image();
             this.charHeadBottomLeftImg.src = 'images/headbottomleft.png?v=' + new Date().getTime();
+            this.bodyImg = new Image();
+            this.bodyImg.src = 'images/body.png?v=' + new Date().getTime();
             this.framesBottomRight = [
-                { image: this.charMovimentImg, sx: 14, sy: 5, sWidth: 28, sHeight: 54 },
-                { image: this.charMovimentImg, sx: 68, sy: 6, sWidth: 36, sHeight: 53 },
-                { image: this.charMovimentImg, sx: 132, sy: 7, sWidth: 29, sHeight: 53 },
-                { image: this.charMovimentImg, sx: 189, sy: 8, sWidth: 38, sHeight: 55 }
+                { image: this.bodyImg, sx: 18, sy: 37, sWidth: 28, sHeight: 58 },
+                { image: this.bodyImg, sx: 72, sy: 37, sWidth: 36, sHeight: 58 },
+                { image: this.bodyImg, sx: 136, sy: 37, sWidth: 29, sHeight: 58 },
+                { image: this.bodyImg, sx: 193, sy: 37, sWidth: 38, sHeight: 58 }
             ];
             this.framesBottomLeft = [
-                { image: this.charMovimentImg, sx: 10, sy: 104, sWidth: 28, sHeight: 54 },
-                { image: this.charMovimentImg, sx: 63, sy: 106, sWidth: 36, sHeight: 53 },
-                { image: this.charMovimentImg, sx: 130, sy: 104, sWidth: 29, sHeight: 53 },
-                { image: this.charMovimentImg, sx: 186, sy: 107, sWidth: 38, sHeight: 55 }
+                { image: this.bodyImg, sx: 14, sy: 136, sWidth: 28, sHeight: 58 },
+                { image: this.bodyImg, sx: 67, sy: 136, sWidth: 36, sHeight: 58 },
+                { image: this.bodyImg, sx: 134, sy: 136, sWidth: 29, sHeight: 58 },
+                { image: this.bodyImg, sx: 190, sy: 136, sWidth: 38, sHeight: 58 }
             ];
             this.framesIdleBottomRight = [
-                { image: this.charMovimentImg, sx: 249, sy: 8, sWidth: 29, sHeight: 53 }
+                { image: this.bodyImg, sx: 253, sy: 37, sWidth: 29, sHeight: 58 }
             ];
             this.framesIdleBottomLeft = [
                 { image: this.charMovimentImg, sx: 249, sy: 108, sWidth: 29, sHeight: 53 }
+            ];
+            this.framesHeadIdleBottomRight = [
+                { image: this.charHeadBottomRightImg, sx: 0, sy: 0, sWidth: 29, sHeight: 53, x: 3, y: -21 }
             ];
             this.framesHeadIdleBottomLeft = [
                 { image: this.charHeadBottomLeftImg, sx: 0, sy: 0, sWidth: 29, sHeight: 53, x: 3, y: -24 }
             ];
             this.framesHeadBottomLeft = [
                 { image: this.charHeadBottomLeftImg, sx: 0, sy: 0, sWidth: 29, sHeight: 53, x: 2, y: -24 },
-                { image: this.charHeadBottomLeftImg, sx: 0, sy: 0, sWidth: 29, sHeight: 53, x: 8, y: -24 },
+                { image: this.charHeadBottomLeftImg, sx: 0, sy: 0, sWidth: 29, sHeight: 53, x: 8, y: -22 },
                 { image: this.charHeadBottomLeftImg, sx: 0, sy: 0, sWidth: 29, sHeight: 53, x: 3, y: -24 },
-                { image: this.charHeadBottomLeftImg, sx: 0, sy: 0, sWidth: 29, sHeight: 53, x: 8, y: -24 }
+                { image: this.charHeadBottomLeftImg, sx: 0, sy: 0, sWidth: 29, sHeight: 53, x: 8, y: -21 }
             ];
             this.framesHeadBottomRight = [
                 { image: this.charHeadBottomRightImg, sx: 0, sy: 0, sWidth: 29, sHeight: 53, x: 3, y: -24 },
-                { image: this.charHeadBottomRightImg, sx: 0, sy: 0, sWidth: 29, sHeight: 53, x: 5, y: -24 },
-                { image: this.charHeadBottomRightImg, sx: 0, sy: 0, sWidth: 29, sHeight: 53, x: 3, y: -24 },
-                { image: this.charHeadBottomRightImg, sx: 0, sy: 0, sWidth: 29, sHeight: 53, x: 7, y: -24 }
+                { image: this.charHeadBottomRightImg, sx: 0, sy: 0, sWidth: 29, sHeight: 53, x: 5, y: -23 },
+                { image: this.charHeadBottomRightImg, sx: 0, sy: 0, sWidth: 29, sHeight: 53, x: 3, y: -22 },
+                { image: this.charHeadBottomRightImg, sx: 0, sy: 0, sWidth: 29, sHeight: 53, x: 7, y: -21 }
             ];
             this.frames = this.framesIdleBottomRight;
-            this.framesHead = this.framesHeadBottomRight;
+            this.framesHead = this.framesHeadIdleBottomRight;
             this.currentLoopIndex = 0;
             this.frameCount = 0;
             this.currentDirection = 0;
@@ -544,6 +549,9 @@ app.controller('Home', function($scope, $http, URL) {
         }
 
         drawFrame(ctx) {
+            /*this.frames = this.framesBottomLeft;
+            this.framesHead = this.framesHeadBottomLeft;
+            this.currentLoopIndex = 3;*/
             var frame = this.frames[this.currentLoopIndex];
             var framesHead = this.framesHead[this.currentLoopIndex];
             ctx.drawImage(frame.image, frame.sx, frame.sy, frame.sWidth, frame.sHeight, this.x, this.y, frame.sWidth, frame.sHeight);
@@ -583,6 +591,7 @@ app.controller('Home', function($scope, $http, URL) {
                         if (this.x >= this.getPlayerXPosition(node.x, node.y) && this.y >= this.getPlayerYPosition(node.x, node.y)) {
                             //bottom right
                             this.currentLoopIndex = 0;
+                            this.framesHead = this.framesHeadIdleBottomRight;
                             this.frames = this.framesIdleBottomRight;
                             this.x = this.getPlayerXPosition(node.x, node.y);
                             this.y = this.getPlayerYPosition(node.x, node.y);
