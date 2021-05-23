@@ -485,8 +485,50 @@ app.controller('Home', function($scope, $http, URL) {
             this.charHeadBottomRightImg.src = 'images/head.png?v=' + new Date().getTime();
             this.charHeadBottomLeftImg = new Image();
             this.charHeadBottomLeftImg.src = 'images/headbottomleft.png?v=' + new Date().getTime();
+            this.charHeadUpImg = new Image();
+            this.charHeadUpImg.src = 'images/headup.png?v=' + new Date().getTime();
+            this.charHeadUpRightImg = new Image();
+            this.charHeadUpRightImg.src = 'images/headupright.png?v=' + new Date().getTime();
+            this.charHeadUpLeftImg = new Image();
+            this.charHeadUpLeftImg.src = 'images/headupleft.png?v=' + new Date().getTime();
+            this.charHeadBottomImg = new Image();
+            this.charHeadBottomImg.src = 'images/headbottom.png?v=' + new Date().getTime();
+            this.charHeadRightImg = new Image();
+            this.charHeadRightImg.src = 'images/headright.png?v=' + new Date().getTime();
+            this.charHeadLeftImg = new Image();
+            this.charHeadLeftImg.src = 'images/headleft.png?v=' + new Date().getTime();
             this.bodyImg = new Image();
             this.bodyImg.src = 'images/body.png?v=' + new Date().getTime();
+            this.framesRight = [
+                { image: this.bodyImg, sx: 21, sy: 756, sWidth: 19, sHeight: 56 },
+                { image: this.bodyImg, sx: 68, sy: 756, sWidth: 39, sHeight: 56 },
+                { image: this.bodyImg, sx: 126, sy: 756, sWidth: 38, sHeight: 56 },
+                { image: this.bodyImg, sx: 192, sy: 756, sWidth: 19, sHeight: 56 },
+            ];
+            this.framesBottom = [
+                { image: this.bodyImg, sx: 11, sy: 547, sWidth: 34, sHeight: 62 },
+                { image: this.bodyImg, sx: 73, sy: 547, sWidth: 34, sHeight: 62 },
+                { image: this.bodyImg, sx: 134, sy: 547, sWidth: 33, sHeight: 62 },
+                { image: this.bodyImg, sx: 191, sy: 547, sWidth: 33, sHeight: 62 },
+            ];
+            this.framesUpLeft = [
+                { image: this.bodyImg, sx: 249, sy: 454, sWidth: 28, sHeight: 55 },
+                { image: this.bodyImg, sx: 192, sy: 454, sWidth: 28, sHeight: 55 },
+                { image: this.bodyImg, sx: 127, sy: 454, sWidth: 40, sHeight: 55 },
+                { image: this.bodyImg, sx: 71, sy: 454, sWidth: 34, sHeight: 55 }
+            ];
+            this.framesUpRight = [
+                { image: this.bodyImg, sx: 11, sy: 348, sWidth: 28, sHeight: 55 },
+                { image: this.bodyImg, sx: 68, sy: 348, sWidth: 28, sHeight: 55 },
+                { image: this.bodyImg, sx: 121, sy: 348, sWidth: 40, sHeight: 55 },
+                { image: this.bodyImg, sx: 183, sy: 348, sWidth: 34, sHeight: 55 }
+            ];
+            this.framesUp = [
+                { image: this.bodyImg, sx: 12, sy: 246, sWidth: 33, sHeight: 52 },
+                { image: this.bodyImg, sx: 76, sy: 246, sWidth: 33, sHeight: 52 },
+                { image: this.bodyImg, sx: 135, sy: 246, sWidth: 33, sHeight: 52 },
+                { image: this.bodyImg, sx: 191, sy: 246, sWidth: 33, sHeight: 52 }
+            ];
             this.framesBottomRight = [
                 { image: this.bodyImg, sx: 18, sy: 37, sWidth: 28, sHeight: 58 },
                 { image: this.bodyImg, sx: 72, sy: 37, sWidth: 36, sHeight: 58 },
@@ -499,17 +541,83 @@ app.controller('Home', function($scope, $http, URL) {
                 { image: this.bodyImg, sx: 134, sy: 136, sWidth: 29, sHeight: 58 },
                 { image: this.bodyImg, sx: 190, sy: 136, sWidth: 38, sHeight: 58 }
             ];
+            //Body Idle
+            this.framesIdleRight = [
+                { image: this.bodyImg, sx: 256, sy: 756, sWidth: 19, sHeight: 56 }
+            ];
+            this.framesIdleBottom = [
+                { image: this.bodyImg, sx: 249, sy: 547, sWidth: 33, sHeight: 62 }
+            ];
+            this.framesIdleUpLeft = [
+                { image: this.bodyImg, sx: 15, sy: 454, sWidth: 28, sHeight: 55 }
+            ];
+            this.framesIdleUpRight = [
+                { image: this.bodyImg, sx: 245, sy: 348, sWidth: 28, sHeight: 55 }
+            ];
+            this.framesIdleUp = [
+                { image: this.bodyImg, sx: 247, sy: 246, sWidth: 33, sHeight: 52 }
+            ];
             this.framesIdleBottomRight = [
                 { image: this.bodyImg, sx: 253, sy: 37, sWidth: 29, sHeight: 58 }
             ];
             this.framesIdleBottomLeft = [
                 { image: this.charMovimentImg, sx: 249, sy: 108, sWidth: 29, sHeight: 53 }
             ];
+            //Head Idle
+            this.framesHeadIdleLeft = [
+                { image: this.charHeadLeftImg, sx: 0, sy: 0, sWidth: 23, sHeight: 29, x: -3, y: -24 },
+            ];
+            this.framesHeadIdleRight = [
+                { image: this.charHeadRightImg, sx: 0, sy: 0, sWidth: 23, sHeight: 29, x: -3, y: -24 },
+            ];
+            this.framesHeadIdleBottom = [
+                { image: this.charHeadBottomImg, sx: 0, sy: 0, sWidth: 24, sHeight: 29, x: 5, y: -23 },
+            ];
+            this.framesHeadIdleUpLeft = [
+                { image: this.charHeadUpLeftImg, sx: 0, sy: 0, sWidth: 26, sHeight: 27, x: 2, y: -23 }
+            ];
+            this.framesHeadIdleUpRight = [
+                { image: this.charHeadUpRightImg, sx: 0, sy: 0, sWidth: 26, sHeight: 27, x: 0, y: -23 }
+            ];
+            this.framesHeadIdleUp = [
+                { image: this.charHeadUpImg, sx: 0, sy: 0, sWidth: 22, sHeight: 28, x: 5, y: -27 }
+            ];
             this.framesHeadIdleBottomRight = [
                 { image: this.charHeadBottomRightImg, sx: 0, sy: 0, sWidth: 29, sHeight: 53, x: 3, y: -21 }
             ];
             this.framesHeadIdleBottomLeft = [
                 { image: this.charHeadBottomLeftImg, sx: 0, sy: 0, sWidth: 29, sHeight: 53, x: 3, y: -24 }
+            ];
+            //Head
+            this.framesHeadRight = [
+                { image: this.charHeadRightImg, sx: 0, sy: 0, sWidth: 23, sHeight: 29, x: -3, y: -25 },
+                { image: this.charHeadRightImg, sx: 0, sy: 0, sWidth: 23, sHeight: 29, x: 6, y: -23 },
+                { image: this.charHeadRightImg, sx: 0, sy: 0, sWidth: 23, sHeight: 29, x: 6, y: -21 },
+                { image: this.charHeadRightImg, sx: 0, sy: 0, sWidth: 23, sHeight: 29, x: -3, y: -22 },
+            ];
+            this.framesHeadBottom = [
+                { image: this.charHeadBottomImg, sx: 0, sy: 0, sWidth: 24, sHeight: 29, x: 4, y: -15 },
+                { image: this.charHeadBottomImg, sx: 0, sy: 0, sWidth: 24, sHeight: 29, x: 5, y: -17 },
+                { image: this.charHeadBottomImg, sx: 0, sy: 0, sWidth: 24, sHeight: 29, x: 4, y: -19 },
+                { image: this.charHeadBottomImg, sx: 0, sy: 0, sWidth: 24, sHeight: 29, x: 5, y: -20 },
+            ];
+            this.framesHeadUpLeft = [
+                { image: this.charHeadUpLeftImg, sx: 0, sy: 0, sWidth: 26, sHeight: 27, x: 3, y: -26 },
+                { image: this.charHeadUpLeftImg, sx: 0, sy: 0, sWidth: 26, sHeight: 27, x: 3, y: -26 },
+                { image: this.charHeadUpLeftImg, sx: 0, sy: 0, sWidth: 26, sHeight: 27, x: 11, y: -24 },
+                { image: this.charHeadUpLeftImg, sx: 0, sy: 0, sWidth: 26, sHeight: 27, x: 7, y: -25 },
+            ];
+            this.framesHeadUpRight = [
+                { image: this.charHeadUpRightImg, sx: 0, sy: 0, sWidth: 26, sHeight: 27, x: -1, y: -26 },
+                { image: this.charHeadUpRightImg, sx: 0, sy: 0, sWidth: 26, sHeight: 27, x: -1, y: -26 },
+                { image: this.charHeadUpRightImg, sx: 0, sy: 0, sWidth: 26, sHeight: 27, x: 3, y: -24 },
+                { image: this.charHeadUpRightImg, sx: 0, sy: 0, sWidth: 26, sHeight: 27, x: 1, y: -25 },
+            ];
+            this.framesHeadUp = [
+                { image: this.charHeadUpImg, sx: 0, sy: 0, sWidth: 22, sHeight: 28, x: 5, y: -26 },
+                { image: this.charHeadUpImg, sx: 0, sy: 0, sWidth: 22, sHeight: 28, x: 5, y: -27 },
+                { image: this.charHeadUpImg, sx: 0, sy: 0, sWidth: 22, sHeight: 28, x: 5, y: -27 },
+                { image: this.charHeadUpImg, sx: 0, sy: 0, sWidth: 22, sHeight: 28, x: 5, y: -27 },
             ];
             this.framesHeadBottomLeft = [
                 { image: this.charHeadBottomLeftImg, sx: 0, sy: 0, sWidth: 29, sHeight: 53, x: 2, y: -24 },
@@ -549,8 +657,8 @@ app.controller('Home', function($scope, $http, URL) {
         }
 
         drawFrame(ctx) {
-            /*this.frames = this.framesBottomLeft;
-            this.framesHead = this.framesHeadBottomLeft;
+            /*this.frames = this.framesRight;
+            this.framesHead = this.framesHeadRight;
             this.currentLoopIndex = 3;*/
             var frame = this.frames[this.currentLoopIndex];
             var framesHead = this.framesHead[this.currentLoopIndex];
@@ -590,9 +698,24 @@ app.controller('Home', function($scope, $http, URL) {
 
                         if (this.x >= this.getPlayerXPosition(node.x, node.y) && this.y >= this.getPlayerYPosition(node.x, node.y)) {
                             //bottom right
-                            this.currentLoopIndex = 0;
-                            this.framesHead = this.framesHeadIdleBottomRight;
-                            this.frames = this.framesIdleBottomRight;
+                            this.x = this.getPlayerXPosition(node.x, node.y);
+                            this.y = this.getPlayerYPosition(node.x, node.y);
+                            this.Xtile = node.x;
+                            this.Ytile = node.y;
+                            if (this.pathfinding.rota.length == key + 1) {
+                                this.move = false;
+                                this.currentLoopIndex = 0;
+                                this.framesHead = this.framesHeadIdleBottomRight;
+                                this.frames = this.framesIdleBottomRight;
+                            }
+                            this.currentNode = this.pathfinding.rota[key + 1];
+                        }
+                    } else if (this.Xtile < node.x && this.Ytile > node.y) {
+                        if (this.x > this.getPlayerXPosition(node.x, node.y)) {
+                            this.x -= this.speedX;
+                        }
+
+                        if (this.x <= this.getPlayerXPosition(node.x, node.y)) {
                             this.x = this.getPlayerXPosition(node.x, node.y);
                             this.y = this.getPlayerYPosition(node.x, node.y);
                             this.Xtile = node.x;
@@ -601,7 +724,30 @@ app.controller('Home', function($scope, $http, URL) {
                                 this.move = false;
                             this.currentNode = this.pathfinding.rota[key + 1];
                         }
-                    } else if (this.Ytile > node.y) {
+                    } else if (this.Xtile > node.x && this.Ytile < node.y) {
+                        this.frames = this.framesRight;
+                        this.framesHead = this.framesHeadRight;
+                        if (this.x < this.getPlayerXPosition(node.x, node.y)) {
+                            this.x += this.speedX;
+                        }
+
+                        if (this.x >= this.getPlayerXPosition(node.x, node.y)) {
+                            this.x = this.getPlayerXPosition(node.x, node.y);
+                            this.y = this.getPlayerYPosition(node.x, node.y);
+                            this.Xtile = node.x;
+                            this.Ytile = node.y;
+                            if (this.pathfinding.rota.length == key + 1) {
+                                //right
+                                this.move = false;
+                                this.currentLoopIndex = 0;
+                                this.framesHead = this.framesHeadIdleRight;
+                                this.frames = this.framesIdleRight;
+                            }
+                            this.currentNode = this.pathfinding.rota[key + 1];
+                        }
+                    } else if (this.Xtile == node.x && this.Ytile > node.y) {
+                        this.frames = this.framesUpLeft;
+                        this.framesHead = this.framesHeadUpLeft;
                         if (this.x > this.getPlayerXPosition(node.x, node.y)) {
                             this.x -= this.speedX;
                         }
@@ -611,14 +757,68 @@ app.controller('Home', function($scope, $http, URL) {
                         }
 
                         if (this.x <= this.getPlayerXPosition(node.x, node.y) && this.y <= this.getPlayerYPosition(node.x, node.y)) {
+                            //Up left
                             this.x = this.getPlayerXPosition(node.x, node.y);
                             this.y = this.getPlayerYPosition(node.x, node.y);
                             this.Xtile = node.x;
                             this.Ytile = node.y;
-                            if (this.pathfinding.rota.length == key + 1)
+                            if (this.pathfinding.rota.length == key + 1) {
                                 this.move = false;
+                                this.currentLoopIndex = 0;
+                                this.framesHead = this.framesHeadIdleUpLeft;
+                                this.frames = this.framesIdleUpLeft;
+                            }
                             this.currentNode = this.pathfinding.rota[key + 1];
                         }
+
+                    } else if (this.Xtile > node.x && this.Ytile == node.y) {
+                        this.frames = this.framesUpRight;
+                        this.framesHead = this.framesHeadUpRight;
+                        if (this.x < this.getPlayerXPosition(node.x, node.y)) {
+                            this.x += this.speedX;
+                        }
+
+                        if (this.y > this.getPlayerYPosition(node.x, node.y)) {
+                            this.y -= this.speedY;
+                        }
+
+                        if (this.x >= this.getPlayerXPosition(node.x, node.y) && this.y <= this.getPlayerYPosition(node.x, node.y)) {
+                            //Up right
+                            this.x = this.getPlayerXPosition(node.x, node.y);
+                            this.y = this.getPlayerYPosition(node.x, node.y);
+                            this.Xtile = node.x;
+                            this.Ytile = node.y;
+                            if (this.pathfinding.rota.length == key + 1) {
+                                this.move = false;
+                                this.currentLoopIndex = 0;
+                                this.framesHead = this.framesHeadIdleUpRight;
+                                this.frames = this.framesIdleUpRight;
+                            }
+                            this.currentNode = this.pathfinding.rota[key + 1];
+                        }
+
+                    } else if (this.Xtile > node.x && this.Ytile > node.y) {
+                        this.frames = this.framesUp;
+                        this.framesHead = this.framesHeadUp;
+                        if (this.y > this.getPlayerYPosition(node.x, node.y)) {
+                            this.y -= this.speedY;
+                        }
+
+                        if (this.y <= this.getPlayerYPosition(node.x, node.y)) {
+                            //Up
+                            this.x = this.getPlayerXPosition(node.x, node.y);
+                            this.y = this.getPlayerYPosition(node.x, node.y);
+                            this.Xtile = node.x;
+                            this.Ytile = node.y;
+                            if (this.pathfinding.rota.length == key + 1) {
+                                this.move = false;
+                                this.currentLoopIndex = 0;
+                                this.framesHead = this.framesHeadIdleUp;
+                                this.frames = this.framesIdleUp;
+                            }
+                            this.currentNode = this.pathfinding.rota[key + 1];
+                        }
+
                     } else if (this.Xtile < node.x && this.Ytile == node.y) {
                         this.frames = this.framesBottomLeft;
                         this.framesHead = this.framesHeadBottomLeft;
@@ -633,47 +833,37 @@ app.controller('Home', function($scope, $http, URL) {
 
                         if (this.x <= this.getPlayerXPosition(node.x, node.y) && this.y >= this.getPlayerYPosition(node.x, node.y)) {
                             //Bottom left
-                            this.currentLoopIndex = 0;
-                            this.frames = this.framesIdleBottomLeft;
-                            this.framesHead = this.framesHeadIdleBottomLeft;
                             this.x = this.getPlayerXPosition(node.x, node.y);
                             this.y = this.getPlayerYPosition(node.x, node.y);
                             this.Xtile = node.x;
                             this.Ytile = node.y;
-                            if (this.pathfinding.rota.length == key + 1)
+                            if (this.pathfinding.rota.length == key + 1) {
                                 this.move = false;
+                                this.currentLoopIndex = 0;
+                                this.frames = this.framesIdleBottomLeft;
+                                this.framesHead = this.framesHeadIdleBottomLeft;
+                            }
                             this.currentNode = this.pathfinding.rota[key + 1];
                         }
                     } else if (this.Xtile < node.x && this.Ytile < node.y) {
-                        //bottom
+                        this.frames = this.framesBottom;
+                        this.framesHead = this.framesHeadBottom;
                         if (this.y < this.getPlayerYPosition(node.x, node.y)) {
                             this.y += this.speedY;
                         }
 
                         if (this.y >= this.getPlayerYPosition(node.x, node.y)) {
+                            //bottom
                             this.x = this.getPlayerXPosition(node.x, node.y);
                             this.y = this.getPlayerYPosition(node.x, node.y);
                             this.Xtile = node.x;
                             this.Ytile = node.y;
-                            if (this.pathfinding.rota.length == key + 1)
+                            if (this.pathfinding.rota.length == key + 1) {
                                 this.move = false;
-                            this.currentNode = this.pathfinding.rota[key + 1];
-                        }
-                    } else {
-                        if (this.x < this.getPlayerXPosition(node.x, node.y)) {
-                            this.x += this.speedX;
-                        }
-                        if (this.y > this.getPlayerYPosition(node.x, node.y)) {
-                            this.y -= this.speedY;
-                        }
-
-                        if (this.x >= this.getPlayerXPosition(node.x, node.y) && this.y <= this.getPlayerYPosition(node.x, node.y)) {
-                            this.x = this.getPlayerXPosition(node.x, node.y);
-                            this.y = this.getPlayerYPosition(node.x, node.y);
-                            this.Xtile = node.x;
-                            this.Ytile = node.y;
-                            if (this.pathfinding.rota.length == key + 1)
-                                this.move = false;
+                                this.currentLoopIndex = 0;
+                                this.frames = this.framesIdleBottom;
+                                this.framesHead = this.framesHeadIdleBottom;
+                            }
                             this.currentNode = this.pathfinding.rota[key + 1];
                         }
                     }
