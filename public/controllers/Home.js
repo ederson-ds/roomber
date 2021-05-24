@@ -1031,7 +1031,7 @@ app.controller('Home', function($scope, $http, URL) {
     var tiles = [];
 
     var grid = new Grid(innerWidth / 2, innerHeight / 2);
-    var chunk = new Chunk(0, 0, 5, 5);
+    var chunk = new Chunk(0, 0, 10, 10);
 
     var lastTime = 0;
 
