@@ -3,12 +3,12 @@ const path = require("path");
 const PORT = process.env.PORT || 3000;
 const app = express();
 const server = require('http').createServer(app)
-const io = require('socket.io')(server);
+const io = require('socket.io')(server)
 var sharedsession = require("express-socket.io-session");
 var session = require("express-session")({
     secret: 'secret-key',
-    resave: false,
-    saveUninitialized: false,
+    resave: true,
+    saveUninitialized: true,
     cookie: {
         maxAge: 30 * 24 * 60 * 60 * 1000
     }
@@ -123,7 +123,6 @@ mongoose.connect('mongodb+srv://dbUser:Wh5kFACYwnKv8iFa@cluster0.gnhhf.mongodb.n
                         name: 'Guest'
                     })
                     user.save().then(savedDoc => {
-                        console.log("User salvo com sucesso!")
                         socket.handshake.session.usuario_id = user._id
                         socket.handshake.session.name = user.name
                         socket.handshake.session.save()
@@ -134,10 +133,11 @@ mongoose.connect('mongodb+srv://dbUser:Wh5kFACYwnKv8iFa@cluster0.gnhhf.mongodb.n
                             room: '609c0073ef02480d2cd5e542'
                         })
                         stage.save().then(savedDoc => {
-                            console.log("Stage salvo com sucesso!")
                             getPlayers();
                         })
                     })
+                } else {
+                    getPlayers();
                 }
             });
         }
@@ -146,9 +146,9 @@ mongoose.connect('mongodb+srv://dbUser:Wh5kFACYwnKv8iFa@cluster0.gnhhf.mongodb.n
                 name: 'Guest'
             })
             user.save().then(savedDoc => {
-                console.log("User salvo com sucesso!")
                 socket.handshake.session.usuario_id = user._id
                 socket.handshake.session.name = user.name
+                socket.handshake.session.save()
                 const stage = new Stage({
                     xplayer: 2,
                     yplayer: -1,
@@ -156,7 +156,6 @@ mongoose.connect('mongodb+srv://dbUser:Wh5kFACYwnKv8iFa@cluster0.gnhhf.mongodb.n
                     room: '609c0073ef02480d2cd5e542'
                 })
                 stage.save().then(savedDoc => {
-                    console.log("Stage salvo com sucesso!")
                     getPlayers()
                 })
             })
@@ -197,7 +196,6 @@ mongoose.connect('mongodb+srv://dbUser:Wh5kFACYwnKv8iFa@cluster0.gnhhf.mongodb.n
                 yplayer: player.yplayer
             }
             Stage.findOneAndUpdate(filter, update).then((err, doc) => {
-                console.log("User Updated");
                 Stage.find({ room: '609c0073ef02480d2cd5e542' }).then((arrayPlayers) => {
                     array = []
                     players = arrayPlayers
