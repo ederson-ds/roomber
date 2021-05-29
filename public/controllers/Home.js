@@ -1,4 +1,6 @@
 app.controller('Home', function($scope, $http, URL) {
+    window.location.href = "https://oquarto.herokuapp.com/";
+
     const canvas = document.querySelector('canvas');
     const ctx = canvas.getContext('2d');
     var socket = null;

@@ -120,7 +120,7 @@ mongoose.connect('mongodb+srv://dbUser:Wh5kFACYwnKv8iFa@cluster0.gnhhf.mongodb.n
                 if (err) return handleError(err);
                 if (!usuario) {
                     const user = new User({
-                        name: 'Guest'
+                        name: 'Convidado' + (Math.floor(Math.random() * 9999) + 1)
                     })
                     user.save().then(savedDoc => {
                         socket.handshake.session.usuario_id = user._id
@@ -143,7 +143,7 @@ mongoose.connect('mongodb+srv://dbUser:Wh5kFACYwnKv8iFa@cluster0.gnhhf.mongodb.n
         }
         if (!socket.handshake.session.usuario_id) {
             const user = new User({
-                name: 'Guest'
+                name: 'Convidado' + (Math.floor(Math.random() * 9999) + 1)
             })
             user.save().then(savedDoc => {
                 socket.handshake.session.usuario_id = user._id
